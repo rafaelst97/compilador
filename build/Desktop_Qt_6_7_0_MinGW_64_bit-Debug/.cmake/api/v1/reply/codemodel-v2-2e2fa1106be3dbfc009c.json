@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-32d84d322fed6e79d3d8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Compilador_aula",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Compilador_aula::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Compilador_aula-Debug-b4b9e919dd5bf3b53c00.json",
+					"name" : "Compilador_aula",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Compilador_aula_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Compilador_aula_autogen-Debug-08734966e5e33a54b6dc.json",
+					"name" : "Compilador_aula_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Compilador_aula_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Compilador_aula_autogen_timestamp_deps-Debug-2fbc928653cf8a832a0d.json",
+					"name" : "Compilador_aula_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/Rafael/Documents/Compilador_aula/build/Desktop_Qt_6_7_0_MinGW_64_bit-Debug",
+		"source" : "C:/Users/Rafael/Documents/Compilador_aula"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}
