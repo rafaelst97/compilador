@@ -22,6 +22,8 @@ private slots:
 
     void on_actionAbrir_triggered();
 
+    void on_Verificar_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

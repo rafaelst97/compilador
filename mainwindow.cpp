@@ -1,12 +1,13 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include <sstream>
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
 #include <QFileDialog>
-
-QString local = "C:/Users/Rafael/Downloads/";
-QString nome = "programa.eas";
+#include "Lexico.h"
+#include "Semantico.h"
+#include "Sintatico.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -50,17 +51,34 @@ void MainWindow::on_actionAbrir_triggered()
         QString texto = entrada.readAll();
         ui->programa->setPlainText(texto);
         arquivo.close();
+        ui->retornoGals->clear();
+    }
+}
+
+
+void MainWindow::on_Verificar_clicked()
+{
+    QString texto = ui->programa->toPlainText();
+    Lexico lexico;
+    Sintatico sintatico;
+    Semantico semantico;
+    bool erro = false;
+
+    std::istringstream textoConvertido (texto.toStdString());
+    lexico.setInput(textoConvertido);
+
+    try
+    {
+        sintatico.parse(&lexico, &semantico);
+    }
+    catch ( SyntaticError &e )
+    {
+        erro = true;
+        ui->retornoGals->setPlainText(QString("Erro Sintático: ") + e.getMessage());
     }
 
-   /* QFile arquivo (local+nome);
-    if (!arquivo.open(QFile::ReadOnly|QFile::Text)){
-        QMessageBox::warning(this, "ERRO", "Erro ao abrir arquivo");
+    if (erro == false){
+        ui->retornoGals->setPlainText(QString("Compilação bem sucedida!"));
     }
-
-    QTextStream entrada(&arquivo);
-    QString texto = entrada.readAll();
-    ui->programa->clear();
-    ui->programa->setPlainText(texto);
-    arquivo.close();*/
 }
 
