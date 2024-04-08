@@ -1,0 +1,14 @@
+# ninja log v5
+1501	4407	7342434651567359	CMakeFiles/Compilador_aula.dir/Compilador_aula_autogen/mocs_compilation.cpp.obj	35b61aa1d95c1764
+4	1039	0	C:/Users/Rafael/Documents/Compilador_aula/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/CMakeFiles/cmake.verify_globs	7efbf6d37296fd0c
+2	1498	7342434620745010	Compilador_aula_autogen/timestamp	bf3eb177f2dbee0f
+1795	5988	7342434667505036	CMakeFiles/Compilador_aula.dir/mainwindow.cpp.obj	9c13bf1e90c12764
+2	1498	7342434620745010	C:/Users/Rafael/Documents/Compilador_aula/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/Compilador_aula_autogen/timestamp	bf3eb177f2dbee0f
+2	1498	7342434620745010	Compilador_aula_autogen/mocs_compilation.cpp	bf3eb177f2dbee0f
+2287	3579	7342434643326146	CMakeFiles/Compilador_aula.dir/Semantico.cpp.obj	c13cc53cd34f719
+2	1498	7342434620745010	C:/Users/Rafael/Documents/Compilador_aula/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/Compilador_aula_autogen/mocs_compilation.cpp	bf3eb177f2dbee0f
+1565	3205	7342434638181704	CMakeFiles/Compilador_aula.dir/Constants.cpp.obj	136aa98e845c4dea
+2053	3605	7342434643576179	CMakeFiles/Compilador_aula.dir/Sintatico.cpp.obj	b7e2ba3a5a5dca41
+2515	3916	7342434646718757	CMakeFiles/Compilador_aula.dir/Lexico.cpp.obj	3f94c70ff1e3be0b
+1532	4703	7342434654554920	CMakeFiles/Compilador_aula.dir/main.cpp.obj	547cf2afd9e4e5e7
+5990	6881	7342434676346348	Compilador_aula.exe	4c3296fb412e44df
