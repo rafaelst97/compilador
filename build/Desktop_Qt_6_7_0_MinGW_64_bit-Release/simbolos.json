@@ -2,7 +2,7 @@
     {
         "escopo": 0,
         "funcao": false,
-        "iniciado": false,
+        "iniciado": true,
         "matriz": false,
         "nome": "i",
         "parametro": false,
@@ -10,7 +10,7 @@
         "proc": false,
         "ref": false,
         "tipo": "int",
-        "usado": false,
+        "usado": true,
         "vetor": false
     }
 ]

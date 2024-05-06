@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <stack>
+#include "SemanticError.h"
 #include "dependencies/json.hpp"
 #include <fstream>
 
@@ -27,7 +28,7 @@ struct simbolo {
 
 vector<simbolo> lista_simbolos;
 vector<int> pilha_escopo;
-vector<simbolo> lista_simb_aux; // essa lista serve pra marcar os simbolos como inicializados 
+vector<simbolo> lista_simb_aux; // essa lista serve pra marcar os simbolos como inicializados
 string tipo_declaracao;
 int escopo_cont = 0;
 
@@ -45,9 +46,10 @@ bool verifica_escopo(int simb_escopo) {
 
 bool procura_simbolo(string nome) {
     // Iterando pela lista 
-    for (const auto& s : lista_simbolos) {
+    for (auto& s : lista_simbolos) {
         if (s.nome == nome) {
             if (verifica_escopo(s.escopo)){
+                s.usado = true;
                 return true;
             }
         }
@@ -85,17 +87,14 @@ simbolo iniciliaza_simbolo() {
     return simb;
 }
 
-
-
-
 void insere_na_tabela(simbolo simb) {
 
     for (const auto& s : lista_simbolos) {
-        if (simb.nome == s.nome and simb.escopo == s.escopo) {
-            throw SemanticError("Variavel ja declarada .");
+        // Verifica se a variável já foi declarada no mesmo escopo
+        if (simb.nome == s.nome && simb.escopo == s.escopo) {
+            throw SemanticError("Variavel ja declarada no escopo atual.");
         }
     }
-
     lista_simbolos.push_back(simb);
 }
 
@@ -131,13 +130,12 @@ void Semantico::executeAction(int action, const Token *token) noexcept(false)
         else
         {
             throw SemanticError("Tipo nao declarado.");
-
         }
         break;
     
     case 3: 
         tipo_declaracao = "";
-        lista_simb_aux.clear();
+        //lista_simb_aux.clear();
         break;
     
     case 4:
@@ -186,14 +184,17 @@ void Semantico::executeAction(int action, const Token *token) noexcept(false)
         break;
     
     case 10:
+        cout << lista_simb_aux.size();
         for (auto& i : lista_simb_aux) {
+            cout << i.nome << endl;
             for (auto& s : lista_simbolos) {
                 if (s.nome == i.nome && s.escopo == i.escopo) {
+                    cout << "Entrou no iniciado";
                     s.iniciado = true;
                 }
             }
         }
-        lista_simb_aux.clear();
+        //lista_simb_aux.clear();
         break; 
     
     case 11:
@@ -215,10 +216,17 @@ void Semantico::executeAction(int action, const Token *token) noexcept(false)
             }
         }
         break;
+
+    case 13:
+
+        cout << str;
+        break;
+
+    case 14:
+
+        cout << str;
+        break;
     }
-
-
-
 
     // Iterando pela lista e imprimindo os símbolos
     cout << endl << "------------- lista de simbolos ------------" << endl;
@@ -251,8 +259,23 @@ void Semantico::executeAction(int action, const Token *token) noexcept(false)
         jsonSimbolos.push_back(simboloJson);
     }
 
-    // Salvando o JSON em um arquivo
-    std::ofstream outputFile("simbolos.json");
-    outputFile << jsonSimbolos.dump(4); // Escreve o JSO
+    if (!jsonSimbolos.empty()) {
+        // Abrir o arquivo para escrita
+        std::ofstream outputFile("simbolos.json");
+        // Verificar se o arquivo foi aberto corretamente
+        if (outputFile.is_open()) {
+            // Escrever o JSON no arquivo
+            outputFile << jsonSimbolos.dump(4);
+            // Fechar o arquivo
+            outputFile.close();
+        } else {
+            // Se houver um problema ao abrir o arquivo, exibir uma mensagem de erro
+            cout << "Erro ao abrir o arquivo para escrita." << endl;
+        }
+    }
 }
 
+void Semantico::limpaSemantico(){
+    lista_simbolos.clear();
+    pilha_escopo.clear();
+}

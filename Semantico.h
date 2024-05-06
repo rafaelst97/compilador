@@ -2,12 +2,12 @@
 #define SEMANTICO_H
 
 #include "Token.h"
-#include "SemanticError.h"
 
 class Semantico
 {
 public:
     void executeAction(int action, const Token *token) noexcept(false);
+    void limpaSemantico();
 };
 
 #endif

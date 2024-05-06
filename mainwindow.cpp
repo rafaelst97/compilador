@@ -70,10 +70,19 @@ void MainWindow::on_actionAbrir_triggered()
 
 void MainWindow::on_Verificar_clicked()
 {
+
+    // Limpar a tabela
+    QAbstractItemModel *model = ui->tabela_simbolos->model();
+    if (model) {
+        model->removeRows(0, model->rowCount());
+    }
+
     QString texto = ui->programa->toPlainText();
     Lexico lexico;
     Sintatico sintatico;
     Semantico semantico;
+    semantico.limpaSemantico();
+    ui->retornoGals->clear();
     bool erro = false;
 
     std::istringstream textoConvertido(texto.toStdString());
@@ -100,10 +109,11 @@ void MainWindow::on_Verificar_clicked()
     }
 
     if (erro == false){
-        ui->retornoGals->setPlainText(QString("Compilação bem sucedida!"));
         inicializarTabelaSimbolos();
         ui->tabela_simbolos->setVisible(true); // Torna a tabela de símbolos visível
         ui->titulo_tabela->setVisible(true); // Torna o título da tabela visível
+        ui->retornoGals->append("Compilação bem sucedida!");
+        //ui->retornoGals->setPlainText(QString("Compilação bem sucedida!"));
     }
 }
 
@@ -117,6 +127,12 @@ void MainWindow::inicializarTabelaSimbolos()
     // Criando um modelo para a tabela
     QStandardItemModel *modelo = new QStandardItemModel(0, titulos.size(), this);
     modelo->setHorizontalHeaderLabels(titulos);
+
+    // Definindo o modelo para a tabela
+    ui->tabela_simbolos->setModel(modelo);
+
+    // Estica a última seção da tabela
+    ui->tabela_simbolos->horizontalHeader()->setStretchLastSection(true);
 
     // Lendo o arquivo JSON de símbolos
     QFile file("simbolos.json");
@@ -146,8 +162,8 @@ void MainWindow::inicializarTabelaSimbolos()
         // Extrair os valores do objeto JSON
         QString tipo = jsonObject["tipo"].toString();
         QString nome = jsonObject["nome"].toString();
-        char iniciado = jsonObject["iniciado"].toString().toStdString()[0];
-        char usado = jsonObject["usado"].toString().toStdString()[0];
+        bool iniciado = jsonObject["iniciado"].toBool();
+        bool usado = jsonObject["usado"].toBool();
         int escopo = jsonObject["escopo"].toInt();
         bool parametro = jsonObject["parametro"].toBool();
         int posicao_do_parametro = jsonObject["posicao_do_parametro"].toInt();
@@ -157,12 +173,20 @@ void MainWindow::inicializarTabelaSimbolos()
         bool funcao = jsonObject["funcao"].toBool();
         bool procedimento = jsonObject["procedimento"].toBool();
 
+        if (iniciado != true){
+            ui->retornoGals->append("(Aviso)Variável " + nome + " não foi inicializada");
+        }
+
+        if (usado != true){
+            ui->retornoGals->append("(Aviso)Variável " + nome +  " não está sendo usada");
+        }
+
         // Criando itens para cada célula da linha
         QList<QStandardItem *> rowItems;
         rowItems << new QStandardItem(tipo);
         rowItems << new QStandardItem(nome);
-        rowItems << new QStandardItem(QString(iniciado));
-        rowItems << new QStandardItem(QString(usado));
+        rowItems << new QStandardItem(iniciado ? "true" : "false");
+        rowItems << new QStandardItem(usado ? "true": "false");
         rowItems << new QStandardItem(QString::number(escopo));
         rowItems << new QStandardItem(parametro ? "true" : "false");
         rowItems << new QStandardItem(QString::number(posicao_do_parametro));
@@ -178,4 +202,6 @@ void MainWindow::inicializarTabelaSimbolos()
 
     // Definindo o modelo para a tabela
     ui->tabela_simbolos->setModel(modelo);
+    setMinimumSize(1200, 600);
+    adjustSize();
 }
