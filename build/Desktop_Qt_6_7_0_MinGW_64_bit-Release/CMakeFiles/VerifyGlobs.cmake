@@ -51,6 +51,7 @@ set(OLD_GLOB
   "C:/Users/Rafael/Documents/Compilador_aula/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/CMakeFiles/3.27.7/CompilerIdCXX/CMakeCXXCompilerId.cpp"
   "C:/Users/Rafael/Documents/Compilador_aula/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/Compilador_aula_autogen/EWIEGA46WW/moc_mainwindow.cpp"
   "C:/Users/Rafael/Documents/Compilador_aula/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/Compilador_aula_autogen/mocs_compilation.cpp"
+  "C:/Users/Rafael/Documents/Compilador_aula/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/Semantico.cpp_autogen/mocs_compilation.cpp"
   "C:/Users/Rafael/Documents/Compilador_aula/main.cpp"
   "C:/Users/Rafael/Documents/Compilador_aula/mainwindow.cpp"
   )
@@ -84,6 +85,7 @@ set(OLD_GLOB
   "C:/Users/Rafael/Documents/Compilador_aula/build/Desktop_Qt_6_7_0_MinGW_64_bit-Debug/Compilador_aula_autogen/moc_predefs.h"
   "C:/Users/Rafael/Documents/Compilador_aula/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/Compilador_aula_autogen/include/ui_mainwindow.h"
   "C:/Users/Rafael/Documents/Compilador_aula/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/Compilador_aula_autogen/moc_predefs.h"
+  "C:/Users/Rafael/Documents/Compilador_aula/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/Semantico.cpp_autogen/moc_predefs.h"
   "C:/Users/Rafael/Documents/Compilador_aula/mainwindow.h"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
@@ -112,6 +114,7 @@ endif()
 # _directory_contents at E:/Qt/6.7.0/mingw_64/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsMacros.cmake:55 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "C:/Users/Rafael/Documents/Compilador_aula/*.hpp")
 set(OLD_GLOB
+  "C:/Users/Rafael/Documents/Compilador_aula/dependencies/json.hpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")

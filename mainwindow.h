@@ -16,6 +16,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    // Declare a função para inicializar a tabela de símbolos
+    void inicializarTabelaSimbolos();
 
 private slots:
     void on_actionSalvar_triggered();

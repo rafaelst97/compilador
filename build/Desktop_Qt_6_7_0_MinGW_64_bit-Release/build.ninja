@@ -216,7 +216,7 @@ build Compilador_aula_autogen/timestamp Compilador_aula_autogen/mocs_compilation
 #############################################
 # Phony custom command for CMakeFiles\Compilador_aula_autogen_timestamp_deps
 
-build CMakeFiles/Compilador_aula_autogen_timestamp_deps | ${cmake_ninja_workdir}CMakeFiles/Compilador_aula_autogen_timestamp_deps: phony E$:/Qt/6.7.0/mingw_64/./bin/uic.exe E$:/Qt/6.7.0/mingw_64/./bin/moc.exe E$:/Qt/6.7.0/mingw_64/lib/libQt6Widgets.a E$:/Qt/6.7.0/mingw_64/lib/libQt6Core.a
+build CMakeFiles/Compilador_aula_autogen_timestamp_deps | ${cmake_ninja_workdir}CMakeFiles/Compilador_aula_autogen_timestamp_deps: phony E$:/Qt/6.7.0/mingw_64/lib/libQt6Core.a E$:/Qt/6.7.0/mingw_64/./bin/moc.exe E$:/Qt/6.7.0/mingw_64/./bin/uic.exe E$:/Qt/6.7.0/mingw_64/lib/libQt6Widgets.a
 
 
 #############################################

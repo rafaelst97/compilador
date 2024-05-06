@@ -28,6 +28,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
 
         Constants.cpp Constants.h LexicalError.h Lexico.cpp Lexico.h SemanticError.h Semantico.cpp Semantico.h Sintatico.cpp Sintatico.h SyntaticError.h Token.h
+        dependencies/json.hpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Compilador_aula APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
