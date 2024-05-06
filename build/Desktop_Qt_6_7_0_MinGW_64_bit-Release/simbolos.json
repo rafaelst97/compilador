@@ -10,7 +10,7 @@
         "proc": false,
         "ref": false,
         "tipo": "int",
-        "usado": true,
+        "usado": false,
         "vetor": false
     }
 ]
