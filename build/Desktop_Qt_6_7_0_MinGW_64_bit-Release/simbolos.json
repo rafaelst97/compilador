@@ -1,0 +1,30 @@
+[
+    {
+        "escopo": 0,
+        "funcao": true,
+        "iniciado": false,
+        "matriz": false,
+        "nome": "teste",
+        "parametro": false,
+        "pos_param": 0,
+        "proc": false,
+        "ref": false,
+        "tipo": "int",
+        "usado": false,
+        "vetor": false
+    },
+    {
+        "escopo": 2,
+        "funcao": false,
+        "iniciado": true,
+        "matriz": false,
+        "nome": "a",
+        "parametro": false,
+        "pos_param": 0,
+        "proc": false,
+        "ref": false,
+        "tipo": "int",
+        "usado": false,
+        "vetor": false
+    }
+]
