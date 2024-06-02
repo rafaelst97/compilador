@@ -196,13 +196,13 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
             escrever_text = true;
 
             if (entrada_saida_dado == "ENTRADA") {
-                ponto_text += "\nld $in_port";
-                ponto_text += "\nsto " + str;
+                ponto_text += "\nLD $in_port";
+                ponto_text += "\nSTO " + str;
                 entrada_saida_dado = "";
             }
             else if (entrada_saida_dado == "SAIDA") {
-                ponto_text += "\nld " + str;
-                ponto_text += "\nsto $out_port";
+                ponto_text += "\nLD " + str;
+                ponto_text += "\nSTO $out_port";
                 entrada_saida_dado = "";
             }
 
@@ -264,7 +264,7 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
             }
         }
 
-        inicio_atribuicao = true;
+        inicio_atribuicao = false;
         break;
 
     case 11:
@@ -311,7 +311,7 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
 
         if (operador == "") {
             ponto_text += "\nLD " + str;
-            if (temp1 == false) {
+            if (temp1 == false && calculando_indice == false) {
                 ponto_text += "\nSTO 1000";
                 temp1 = true;
 
@@ -326,9 +326,40 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
             pilha_operador.pop_back();
         }
         else if (operador == "AND") {
-            ponto_text += "\nAND " + str;
+            if (temp1 == true) {
+                ponto_text += "\nLD 1000";
+                ponto_text += "\nAND " + str;
+                ponto_text += "\nSTO 1000";
+
+                pilha_operador.pop_back();
+            }
+        }
+        else if (operador == "OR_BIT") {
+            if (temp1 == true) {
+                ponto_text += "\nLD 1000";
+                ponto_text += "\nOR " + str;
+                ponto_text += "\nSTO 1000";
+
+                pilha_operador.pop_back();
+            }
+        }
+        else if (operador == "XOR_BIT") {
+            if (temp1 == true) {
+                ponto_text += "\nLD 1000";
+                ponto_text += "\nXOR " + str;
+                ponto_text += "\nSTO 1000";
+
+                pilha_operador.pop_back();
+            }
+        }
+        else if (operador == "NOT") {
+            ponto_text += "\nNOT " + str;
+            //ponto_text += "\nSTO 1000";
+
             pilha_operador.pop_back();
         }
+
+        entrando_no_indice = false;
 
         break;
 
@@ -359,7 +390,7 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
         }
 
         if (operador == "" || (operador == "" && calculando_indice == true)) {
-            if (escrever_text){
+            if (escrever_text) {
                 ponto_text += "\nLDI " + str;
 
                 if (temp1 == false && calculando_indice == false) {
@@ -372,20 +403,21 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
         }
         else if (operador == "SOMA") {
             if (escrever_text) {
-                if (calculando_indice == false ){
+                if (calculando_indice == false) {
                     if (temp1 == true) {
                         ponto_text += "\nLD 1000";
                         ponto_text += "\nADDI " + str;
                         ponto_text += "\nSTO 1000";
+                        pilha_operador.pop_back();
                     }
 
                 }
-                else if(calculando_indice == true && entrando_no_indice == false){
+                else if (calculando_indice == true && entrando_no_indice == false) {
                     ponto_text += "\nADDI " + str;
                     pilha_operador.pop_back();
                 }
-                else if(calculando_indice == true && entrando_no_indice == true) {
-                    ponto_text += "\nLDI  " + str;
+                else if (calculando_indice == true && entrando_no_indice == true) {
+                    ponto_text += "\nLDI " + str;
                     entrando_no_indice = false;
                 }
             }
@@ -395,11 +427,67 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
         }
         else if (operador == "SUBTRACAO") {
             if (escrever_text) {
-                ponto_text += "\nSUBI " + str;
+                if (calculando_indice == false) {
+                    if (temp1 == true) {
+                        ponto_text += "\nLD 1000";
+                        ponto_text += "\nSUBI " + str;
+                        ponto_text += "\nSTO 1000";
+                        pilha_operador.pop_back();
+                    }
+
+                }
+                else if (calculando_indice == true && entrando_no_indice == false) {
+                    ponto_text += "\nSUBI " + str;
+                    pilha_operador.pop_back();
+                }
+                else if (calculando_indice == true && entrando_no_indice == true) {
+                    ponto_text += "\nLDI " + str;
+                    entrando_no_indice = false;
+                }
             }
 
             //pilha_operador.pop_back();
-            vetor_tamanho -= atoi(str.c_str());
+            vetor_tamanho += atoi(str.c_str());
+        }
+        else if (operador == "AND") {
+            if (escrever_text) {
+                if (temp1 == true) {
+                    ponto_text += "\nLD 1000";
+                    ponto_text += "\nANDI " + str;
+                    ponto_text += "\nSTO 1000";
+
+                    pilha_operador.pop_back();
+                }
+            }
+        }
+        else if (operador == "OR_BIT") {
+            if (escrever_text) {
+                if (temp1 == true) {
+                    ponto_text += "\nLD 1000";
+                    ponto_text += "\nORI " + str;
+                    ponto_text += "\nSTO 1000";
+
+                    pilha_operador.pop_back();
+                }
+            }
+        }
+        else if (operador == "XOR_BIT") {
+            if (escrever_text) {
+                if (temp1 == true) {
+                    ponto_text += "\nLD 1000";
+                    ponto_text += "\nXORI " + str;
+                    ponto_text += "\nSTO 1000";
+
+                    pilha_operador.pop_back();
+                }
+            }
+        }
+        else if (operador == "NOT") {
+            if (escrever_text) {
+                ponto_text += "\nNOT " + str;
+
+                pilha_operador.pop_back();
+            }
         }
 
         break;
@@ -421,29 +509,28 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
         else {
             operador = "";
         }
-        //ponto_text += "\nOPERADOR (  SOMA) = "+ operador;
 
+        /*
         if (lista_simb_aux.size() >= 2) {
             simb_aux = lista_simb_aux.back();
             ponto_text += "\nSTO $indr";
-            ponto_text += "\nLDV " + simb_aux.nome;
+            ponto_text += "\nLDV" + simb_aux.nome;
         }
+        */
 
         if (temp1 == false) {
             ponto_text += "\nSTO 1000";
             temp1 = true;
         }
         else if (temp1 == true && operador != "") {
-            ponto_text += "\nSTO 1001";
+            ponto_text += "\nSTO 1001 CUUUU";
             ponto_text += "\nLD 1000";
 
             if (operador == "SOMA") {
                 ponto_text += "\nADD 1001";
-            }else if (operador == "SUBTRACAO") {
-                ponto_text += "\nSUB 1001";
             }
-            else if (operador == "AND") {
-                ponto_text += "\n AND 1001";
+            else if (operador == "SUBTRACAO") {
+                ponto_text += "\nSUB 1001";
             }
             ponto_text += "\nSTO 1000";
             if (!pilha_operador.empty()) {
@@ -462,7 +549,7 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
         for (auto& i : lista_simb_aux) {
             for (auto& s : lista_simbolos) {
                 if (s.nome == i.nome && s.escopo == i.escopo) {
-                    ponto_text += "\nLD 1000";
+                    ponto_text += "\nLD 1000 ";
                     ponto_text += "\nSTO " + s.nome;
                 }
             }
@@ -520,13 +607,23 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
 
         break;
 
+
+
+    case 30:
+        pilha_operador.push_back("OR_BIT");
+        break;
+
+    case 31:
+        pilha_operador.push_back("XOR_BIT");
+        break;
+
+    case 32:
+        pilha_operador.push_back("NOT");
+        break;
+
     case 29:
         // fim de indice vetor
         calculando_indice = false;
-
-
-        // vet[1] = 1; quebra
-        //ponto_text += "\nSTO $indr cu";
 
         if (!pilha_operador.empty()) {
             operador = pilha_operador.back();
@@ -538,6 +635,7 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
         const auto& i = lista_simb_aux.back();
 
         if (inicio_atribuicao == false) {
+            ponto_text += "\nSTO $indr";
             ponto_text += "\nLDV " + i.nome;
         }
 
@@ -554,18 +652,25 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
                 ponto_text += "\nLD 1000";
                 if (operador == "SOMA") {
                     ponto_text += "\nADD 1001";
+                    ponto_text += "\nSTO 1000";
                     temp2 = false;
+                    pilha_operador.pop_back();
 
-                }else if (operador == "SUBTRACAO") {
+                }
+                else if (operador == "SUBTRACAO") {
                     ponto_text += "\nSUB 1001";
+                    ponto_text += "\nSTO 1000";
                     temp2 = false;
+                    pilha_operador.pop_back();
                 }
 
             }
         }
-
         break;
+
+
     }
+
 
     // Iterando pela lista e imprimindo os símbolos
     cout << endl << "------------- lista de simbolos ------------" << endl;
