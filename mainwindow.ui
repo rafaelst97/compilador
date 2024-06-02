@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1757</width>
-    <height>584</height>
+    <height>574</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,6 +64,25 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QLabel" name="TituloAssembly">
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Assembly</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="resultadoAssembly">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
@@ -90,6 +109,24 @@
        </layout>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QPushButton" name="salvarAssembly">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Salvar Código Assembly</string>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QPushButton" name="Verificar">
