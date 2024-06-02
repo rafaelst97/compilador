@@ -6,6 +6,9 @@
 #include "SemanticError.h"
 #include "dependencies/json.hpp"
 #include <fstream>
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
 
 using json = nlohmann::json;
 using namespace std;
@@ -31,6 +34,21 @@ vector<int> pilha_escopo;
 vector<simbolo> lista_simb_aux; // essa lista serve pra marcar os simbolos como inicializados
 string tipo_declaracao;
 int escopo_cont = 0;
+
+//geração de codigo
+string ponto_data = ".data\n";
+string ponto_text = ".text\n";
+string entrada_saida_dado = "";
+vector<string> pilha_operador;
+string recebe_atrib = "";
+int vetor_tamanho = 0;
+bool escrever_text = false;
+bool temp1 = false;
+bool temp2 = false;
+bool temp3 = false;
+bool calculando_indice = false;
+bool inicio_atribuicao = true;
+bool entrando_no_indice = false;
 
 bool verifica_escopo(int simb_escopo) {
 
@@ -103,6 +121,8 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
     string str;
     str = token->getLexeme();
     simbolo simb;
+    simbolo simb_aux;
+    string operador;
 
     if (pilha_escopo.empty()) {
         pilha_escopo.push_back(0);
@@ -114,6 +134,8 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
 
     case 1:
         tipo_declaracao = str;
+        lista_simb_aux.clear();
+
         break;
 
     case 2:
@@ -125,6 +147,7 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
             insere_na_tabela(simb);
 
             lista_simb_aux.push_back(simb); //coloca na lista para caso chegar na action #10, marcar como inicializado
+
         }
         else
         {
@@ -133,9 +156,27 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
         break;
 
     case 3:
+
+        // geração de codigo
+
+        for (auto& i : lista_simb_aux) {
+            for (auto& s : lista_simbolos) {
+                if (s.nome == i.nome && s.escopo == i.escopo) {
+
+                    if (s.vetor == false) {
+                        ponto_data += s.nome + ":0\n";
+
+                        escrever_text = true;
+                    }
+                }
+            }
+        }
+        //geração de codigo
+
+
+
         tipo_declaracao = "";
-        lista_simb_aux.clear();
-        //lista_simb_aux.clear();
+
         break;
 
     case 4:
@@ -143,6 +184,7 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
             throw SemanticError("Variavel nao declarada.");
         }
         else {
+            //lista_simb_aux.clear();
             for (auto& s : lista_simbolos) {
                 if (s.nome == str and s.escopo == pilha_escopo[pilha_escopo.size() - 1]) {
                     cout << "insere na lista aux" << s.nome << s.escopo << endl << endl;
@@ -150,11 +192,30 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
 
                 }
             }
+
+            escrever_text = true;
+
+            if (entrada_saida_dado == "ENTRADA") {
+                ponto_text += "\nld $in_port";
+                ponto_text += "\nsto " + str;
+                entrada_saida_dado = "";
+            }
+            else if (entrada_saida_dado == "SAIDA") {
+                ponto_text += "\nld " + str;
+                ponto_text += "\nsto $out_port";
+                entrada_saida_dado = "";
+            }
+
+            if (recebe_atrib == "") {
+                recebe_atrib = str;
+            }
         }
+
+
         break;
 
     case 5:
-        if (procura_simbolo(str,true) == false){
+        if (procura_simbolo(str, true) == false) {
             throw SemanticError("Funcao nao declarada.");
         }
         break;
@@ -190,17 +251,20 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
         break;
 
     case 10:
-        cout << lista_simb_aux.size();
         for (auto& i : lista_simb_aux) {
-            cout <<endl<<"CU "<< i.nome << endl;
             for (auto& s : lista_simbolos) {
                 if (s.nome == i.nome && s.escopo == i.escopo) {
-                    cout << "Entrou no iniciado";
                     s.iniciado = true;
+
+                    if (s.vetor == true) {
+                        ponto_text += "\nSTO 1002";
+                        temp3 = true;
+                    }
                 }
             }
         }
-        //lista_simb_aux.clear();
+
+        inicio_atribuicao = true;
         break;
 
     case 11:
@@ -208,6 +272,19 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
             for (auto& s : lista_simbolos) {
                 if (s.nome == i.nome && s.escopo == i.escopo) {
                     s.vetor = true;
+
+                    // adiciona no .data o nome do vetor
+                    ponto_data += s.nome + ":";
+
+                    // e a quantidade de '0' para definir o tamanho
+                    for (int i = 0; i < vetor_tamanho; i++) {
+                        ponto_data += '0';
+                        if (i < vetor_tamanho - 1) {
+                            ponto_data += ',';
+                        }
+                    }
+                    ponto_data += "\n";
+
                 }
             }
         }
@@ -221,6 +298,38 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
                 s.usado = true;
             }
         }
+
+        // geracao de codigo
+
+
+        if (!pilha_operador.empty()) {
+            operador = pilha_operador.back();
+        }
+        else {
+            operador = "";
+        }
+
+        if (operador == "") {
+            ponto_text += "\nLD " + str;
+            if (temp1 == false) {
+                ponto_text += "\nSTO 1000";
+                temp1 = true;
+
+            }
+        }
+        else if (operador == "SOMA") {
+            ponto_text += "\nADD " + str;
+            pilha_operador.pop_back();
+        }
+        else if (operador == "SUBTRACAO") {
+            ponto_text += "\nSUB " + str;
+            pilha_operador.pop_back();
+        }
+        else if (operador == "AND") {
+            ponto_text += "\nAND " + str;
+            pilha_operador.pop_back();
+        }
+
         break;
 
     case 13:
@@ -230,25 +339,255 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
 
     case 14:
 
-        cout << str;
+        if (str == "+") {
+            pilha_operador.push_back("SOMA");
+        }
+        else if (str == "-") {
+            pilha_operador.push_back("SUBTRACAO");
+        }
+
+        break;
+
+    case 20:
+        // geracao de codigo
+
+        if (pilha_operador.empty() == false) {
+            operador = pilha_operador.back();
+        }
+        else {
+            operador = "";
+        }
+
+        if (operador == "" || (operador == "" && calculando_indice == true)) {
+            if (escrever_text){
+                ponto_text += "\nLDI " + str;
+
+                if (temp1 == false && calculando_indice == false) {
+                    ponto_text += "\nSTO 1000";
+                    temp1 = true;
+                }
+                entrando_no_indice = false;
+            }
+            vetor_tamanho = atoi(str.c_str());
+        }
+        else if (operador == "SOMA") {
+            if (escrever_text) {
+                if (calculando_indice == false ){
+                    if (temp1 == true) {
+                        ponto_text += "\nLD 1000";
+                        ponto_text += "\nADDI " + str;
+                        ponto_text += "\nSTO 1000";
+                    }
+
+                }
+                else if(calculando_indice == true && entrando_no_indice == false){
+                    ponto_text += "\nADDI " + str;
+                    pilha_operador.pop_back();
+                }
+                else if(calculando_indice == true && entrando_no_indice == true) {
+                    ponto_text += "\nLDI  " + str;
+                    entrando_no_indice = false;
+                }
+            }
+
+            //pilha_operador.pop_back();
+            vetor_tamanho += atoi(str.c_str());
+        }
+        else if (operador == "SUBTRACAO") {
+            if (escrever_text) {
+                ponto_text += "\nSUBI " + str;
+            }
+
+            //pilha_operador.pop_back();
+            vetor_tamanho -= atoi(str.c_str());
+        }
+
+        break;
+
+    case 21:
+        entrada_saida_dado = "ENTRADA";
+        break;
+
+    case 22:
+        entrada_saida_dado = "SAIDA";
+        break;
+
+
+    case 23:
+
+        if (!pilha_operador.empty()) {
+            operador = pilha_operador.back();
+        }
+        else {
+            operador = "";
+        }
+        //ponto_text += "\nOPERADOR (  SOMA) = "+ operador;
+
+        if (lista_simb_aux.size() >= 2) {
+            simb_aux = lista_simb_aux.back();
+            ponto_text += "\nSTO $indr";
+            ponto_text += "\nLDV " + simb_aux.nome;
+        }
+
+        if (temp1 == false) {
+            ponto_text += "\nSTO 1000";
+            temp1 = true;
+        }
+        else if (temp1 == true && operador != "") {
+            ponto_text += "\nSTO 1001";
+            ponto_text += "\nLD 1000";
+
+            if (operador == "SOMA") {
+                ponto_text += "\nADD 1001";
+            }else if (operador == "SUBTRACAO") {
+                ponto_text += "\nSUB 1001";
+            }
+            else if (operador == "AND") {
+                ponto_text += "\n AND 1001";
+            }
+            ponto_text += "\nSTO 1000";
+            if (!pilha_operador.empty()) {
+                pilha_operador.pop_back();
+            }
+        }
+
+        break;
+
+    case 24:
+        pilha_operador.push_back("AND");
+        break;
+
+    case 25:
+
+        for (auto& i : lista_simb_aux) {
+            for (auto& s : lista_simbolos) {
+                if (s.nome == i.nome && s.escopo == i.escopo) {
+                    ponto_text += "\nLD 1000";
+                    ponto_text += "\nSTO " + s.nome;
+                }
+            }
+        }
+
+        break;
+
+    case 26:
+        lista_simb_aux.clear();
+        tipo_declaracao = "";
+        entrada_saida_dado = "";
+        pilha_operador.clear();
+        recebe_atrib = "";
+        vetor_tamanho = 0;
+        escrever_text = false;
+        temp1 = false;
+        temp2 = false;
+        temp3 = false;
+        inicio_atribuicao = true;
+        entrando_no_indice = false;
+
+
+        break;
+
+    case 27:
+
+        simb_aux = lista_simb_aux.front();
+
+        if (temp3 == true) {
+            ponto_text += "\nLD 1002";
+            ponto_text += "\nSTO $indr";
+
+            if (temp1 == true) {
+                ponto_text += "\nLD 1000";
+                ponto_text += "\nSTOV " + simb_aux.nome;
+
+            }
+
+        }
+        else {
+            if (temp1 == true) {
+                ponto_text += "\nLD 1000";
+                ponto_text += "\nSTO " + simb_aux.nome;
+
+            }
+        }
+
+        break;
+
+    case 28:
+        // inicio de indice vetor
+
+        calculando_indice = true;
+        entrando_no_indice = true;
+
+        break;
+
+    case 29:
+        // fim de indice vetor
+        calculando_indice = false;
+
+
+        // vet[1] = 1; quebra
+        //ponto_text += "\nSTO $indr cu";
+
+        if (!pilha_operador.empty()) {
+            operador = pilha_operador.back();
+        }
+        else {
+            operador = "";
+        }
+
+        const auto& i = lista_simb_aux.back();
+
+        if (inicio_atribuicao == false) {
+            ponto_text += "\nLDV " + i.nome;
+        }
+
+        if (inicio_atribuicao == false) {
+
+            if (temp1 == false) {
+                ponto_text += "\nSTO 1000";
+                temp1 = true;
+            }
+            else {
+                ponto_text += "\nSTO 1001";
+                temp2 = true;
+
+                ponto_text += "\nLD 1000";
+                if (operador == "SOMA") {
+                    ponto_text += "\nADD 1001";
+                    temp2 = false;
+
+                }else if (operador == "SUBTRACAO") {
+                    ponto_text += "\nSUB 1001";
+                    temp2 = false;
+                }
+
+            }
+        }
+
         break;
     }
 
     // Iterando pela lista e imprimindo os símbolos
     cout << endl << "------------- lista de simbolos ------------" << endl;
     for (const auto& s : lista_simbolos) {
-        std::cout << "Tipo: " << s.tipo << ", Nome: " << s.nome << ", Escopo: " << s.escopo <<  ", Iniciado: " << s.iniciado <<  ", Vetor: " << s.vetor <<  ", Usado: " << s.usado  << std::endl;
+        std::cout << "Tipo: " << s.tipo << ", Nome: " << s.nome << ", Escopo: " << s.escopo << ", Iniciado: " << s.iniciado << ", Vetor: " << s.vetor << ", Usado: " << s.usado << std::endl;
     }
     // Iterando pela lista e imprimindo os símbolos
     cout << endl << "------------- Pilha de escopo ------------" << endl;
     for (const auto& e : pilha_escopo) {
-        cout << "Escopo: " << e <<endl;
+        cout << "Escopo: " << e << endl;
     }
     cout << "------------- Fim ------------" << endl << endl;
+
+    cout << "------------ codigo ------------" << endl << endl;
+    cout << ponto_data << endl << ponto_text << endl << "HLT 0" << endl;
 
 
     // Criando o JSON com a lista de símbolos
     json jsonSimbolos;
+    QString codigoAssembly = QString::fromStdString(ponto_data) + "\n";
+    codigoAssembly += QString::fromStdString(ponto_text);
+
     for (const auto& s : lista_simbolos) {
         json simboloJson;
         simboloJson["tipo"] = s.tipo;
@@ -277,6 +616,26 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
         } else {
             // Se houver um problema ao abrir o arquivo, exibir uma mensagem de erro
             cout << "Erro ao abrir o arquivo para escrita." << endl;
+        }
+    }
+
+    if (!codigoAssembly.isEmpty()){
+        // Nome do arquivo onde a string será salva
+        QString nomeDoArquivo = "temp.tmp";
+        // Cria uma instância de QFile e abre o arquivo
+        QFile arquivo(nomeDoArquivo);
+
+        // Verificar se o arquivo foi aberto corretamente
+        if (arquivo.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+            // Cria um QTextStream para escrever no arquivo
+            QTextStream saida(&arquivo);
+            // Escreve a string no arquivo
+            saida << codigoAssembly;
+            // Fecha o arquivo
+            arquivo.close();
+            qDebug() << "String salva com sucesso no arquivo" << nomeDoArquivo;
+        } else {
+            qDebug() << "Não foi possível abrir o arquivo" << nomeDoArquivo;
         }
     }
 

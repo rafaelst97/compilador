@@ -49,6 +49,20 @@ void MainWindow::on_actionSalvar_triggered()
     }
 }
 
+QString lerArquivoParaQString(const QString& nomeDoArquivo) {
+    QFile arquivo(nomeDoArquivo);
+
+    if (!arquivo.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Não foi possível abrir o arquivo" << nomeDoArquivo;
+        return QString();
+    }
+
+    QTextStream entrada(&arquivo);
+    QString conteudo = entrada.readAll();
+    arquivo.close();
+
+    return conteudo;
+}
 
 void MainWindow::on_actionAbrir_triggered()
 {
@@ -85,8 +99,8 @@ void MainWindow::on_Verificar_clicked()
     ui->retornoGals->clear();
     bool erro = false;
 
-    std::istringstream textoConvertido(texto.toStdString());
-    lexico.setInput(textoConvertido);
+    std::string textoConvertido(texto.toStdString());
+    lexico.setInput(textoConvertido.c_str());
 
     try
     {
@@ -110,6 +124,17 @@ void MainWindow::on_Verificar_clicked()
 
     if (erro == false){
         inicializarTabelaSimbolos();
+
+        QString nomeDoArquivo = "temp.tmp";
+        QString conteudoDoArquivo = lerArquivoParaQString(nomeDoArquivo);
+
+        if (!conteudoDoArquivo.isEmpty()) {
+            qDebug() << "Conteúdo do arquivo:" << conteudoDoArquivo;
+        } else {
+            qDebug() << "O arquivo está vazio ou não pôde ser lido.";
+        }
+
+        ui->resultadoAssembly->append(conteudoDoArquivo);
         ui->tabela_simbolos->setVisible(true); // Torna a tabela de símbolos visível
         ui->titulo_tabela->setVisible(true); // Torna o título da tabela visível
         ui->retornoGals->append("Compilação bem sucedida!");
@@ -205,3 +230,20 @@ void MainWindow::inicializarTabelaSimbolos()
     setMinimumSize(1200, 600);
     adjustSize();
 }
+
+void MainWindow::on_salvarAssembly_clicked()
+{
+    QString filtro = "Arquivos asm (*.asm)";
+    QString salvarArquivo = QFileDialog::getSaveFileName(this, "Salvar assembly", QDir::homePath(), filtro);
+    QFile arquivo(salvarArquivo);
+
+    if (!arquivo.open(QFile::WriteOnly|QFile::Text)){
+        //QMessageBox::warning(this, "ERRO", "erro ao salvar o arquivo");
+    }else{
+        QTextStream saida(&arquivo);
+        QString texto = ui->resultadoAssembly->toPlainText();
+        saida << texto;
+        arquivo.close();
+    }
+}
+

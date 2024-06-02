@@ -26,6 +26,8 @@ private slots:
 
     void on_Verificar_clicked();
 
+    void on_salvarAssembly_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

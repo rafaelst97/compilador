@@ -79,7 +79,12 @@
         <item>
          <widget class="QTextEdit" name="resultadoAssembly">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
           </property>
          </widget>
         </item>

@@ -2,6 +2,7 @@
 #define SEMANTICO_H
 
 #include "Token.h"
+#include "SemanticError.h"
 
 class Semantico
 {
