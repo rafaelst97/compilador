@@ -8,7 +8,7 @@
 #include <fstream>
 #include <QFile>
 #include <QTextStream>
-#include <QDebug>
+//#include <QDebug>
 
 using json = nlohmann::json;
 using namespace std;
@@ -738,9 +738,9 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
             saida << codigoAssembly;
             // Fecha o arquivo
             arquivo.close();
-            qDebug() << "String salva com sucesso no arquivo" << nomeDoArquivo;
+            //qDebug() << "String salva com sucesso no arquivo" << nomeDoArquivo;
         } else {
-            qDebug() << "Não foi possível abrir o arquivo" << nomeDoArquivo;
+            //qDebug() << "Não foi possível abrir o arquivo" << nomeDoArquivo;
         }
     }
 
