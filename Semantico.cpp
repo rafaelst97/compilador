@@ -749,6 +749,22 @@ void Semantico::executeAction(int action, const Token* token) noexcept(false)
 void Semantico::limpaSemantico(){
     lista_simbolos.clear();
     pilha_escopo.clear();
+    lista_simb_aux.clear();
+    tipo_declaracao = "";
+    entrada_saida_dado = "";
+    pilha_operador.clear();
+    recebe_atrib = "";
+    vetor_tamanho = 0;
+    escrever_text = false;
+    temp1 = false;
+    temp2 = false;
+    temp3 = false;
+    inicio_atribuicao = true;
+    entrando_no_indice = false;
+    ponto_data.clear();
+    ponto_text.clear();
+    ponto_data = ".data\n";
+    ponto_text = ".text\n";
 }
 
 

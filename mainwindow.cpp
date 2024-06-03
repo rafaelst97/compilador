@@ -134,6 +134,7 @@ void MainWindow::on_Verificar_clicked()
             qDebug() << "O arquivo está vazio ou não pôde ser lido.";
         }
 
+        ui->resultadoAssembly->clear();
         ui->resultadoAssembly->append(conteudoDoArquivo);
         ui->tabela_simbolos->setVisible(true); // Torna a tabela de símbolos visível
         ui->titulo_tabela->setVisible(true); // Torna o título da tabela visível

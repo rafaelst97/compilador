@@ -17,6 +17,7 @@ Compilador_aula_autogen/timestamp: \
   CMakeFiles/3.27.7/CMakeRCCompiler.cmake \
   CMakeFiles/3.27.7/CMakeSystem.cmake \
   Compilador_aula_autogen/moc_predefs.h \
+  C:/Users/Rafael/Documents/Compilador_aula/dependencies/json.hpp \
   C:/Users/Rafael/Documents/Compilador_aula/main.cpp \
   C:/Users/Rafael/Documents/Compilador_aula/mainwindow.cpp \
   C:/Users/Rafael/Documents/Compilador_aula/mainwindow.h \
