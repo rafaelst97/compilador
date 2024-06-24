@@ -646,15 +646,15 @@ void Semantico::executeAction(int action, const Token* token)
             simb_aux = lista_simb_aux.front();
             ponto_text += "\nLD 1000";
 
-            if (parametro_aux == "") {
+            if (parametro_aux == "" || parametro_aux == "main") {
                 ponto_text += "\nSTO " + simb_aux.nome;
             }
             else {
                 ponto_text += "\nSTO " +parametro_aux+"_"+ simb_aux.nome;
+
             }
             temp1 = false;
         }
-
         break;
 
     case 24:

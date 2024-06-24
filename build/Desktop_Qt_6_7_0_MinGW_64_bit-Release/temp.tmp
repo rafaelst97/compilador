@@ -1,19 +1,29 @@
 .data
-somar_a: 0
-somar_b: 0
+a:0
 
 .text
  JMP _main 
 
 
-_somar
-LD somar_b
-STO 1000
-LD somar_b
-RETURN 0 
-
 _main
+LDI 5
+STO 1000
+LD 1000 
+STO a
+LD a
+STO 1000
+LD 1000
+SUB 5
+STO 1000
+LD 1000
+BLT R1
 LDI 10
-STO somar_main
-LDI 50
-CALL _somar
+STO 1000
+LD 1000
+STO a
+
+R1:
+LDI 15
+STO 1000
+LD 1000
+STO a
