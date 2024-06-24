@@ -1,29 +1,32 @@
 .data
+func_parm: 0
+soma_b: 0
 a:0
 
 .text
  JMP _main 
 
 
-_main
-LDI 5
-STO 1000
-LD 1000 
-STO a
-LD a
+_func
+LDI 1
 STO 1000
 LD 1000
-SUB 5
-STO 1000
-LD 1000
-BLT R1
+STO func_parm
+RETURN 0 
+
+_soma
 LDI 10
 STO 1000
 LD 1000
-STO a
+STO soma_b
+RETURN 0 
 
-R1:
-LDI 15
+_main
+LD a
 STO 1000
 LD 1000
-STO a
+STO func_parm
+CALL _func
+LDI 5
+STO soma_b
+CALL _soma

@@ -109,6 +109,7 @@ simbolo iniciliaza_simbolo() {
     simb.ref        = false;
     simb.funcao     = false;
     simb.proc       = false;
+    simb.parametro_lido = false;
     return simb;
 }
 
