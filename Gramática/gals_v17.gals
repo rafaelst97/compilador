@@ -1,0 +1,257 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = C++
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+ScannerCaseSensitive = true
+ScannerTable = Full
+Input = String
+Parser = SLR
+#RegularDefinitions
+d:[0-9]
+l:[a-zA-Z]
+w:[\ \t\n\s\r]
+#Tokens
+:[\s\t\r\n\b]*
+
+// Delimitadores e pontuadores 
+PARENTESES_ABRE:\(
+PARENTESES_FECHA:\)
+COLCHETES_ABRE:\[
+COLCHETES_FECHA:\]
+PONTO:\.
+VIRGULA:,
+PONTO_VIRGULA:;
+CHAVE_ABRE: \{
+CHAVE_FECHA: \}
+
+// Palavras Reservadas
+INT: int
+ELSE: else
+IF: if
+FLOAT: float
+FOR: for
+CHAR: char
+STRING: string
+BOOL: bool
+VOID: void
+RETURN: return
+WHILE: while
+DO: do
+COUT: cout
+CIN: cin
+
+
+// vetor
+
+// Operadores Relacionais 
+MAIOR: [>]
+MENOR: [<]
+MAIOR_IGUAL: [>][=]
+MENOR_IGUAL: [<][=]
+IGUAL: [=][=]
+DIFERENTE: [!][=]
+
+
+// Comentário de multiplas linhas
+COMENTARIO_MULTILINHA: /\*/*([a-zA-Z0-9à-úÀ-Ú!@#$%&\*\+\-/%_\-\s]+|\n|\s)*\*/
+
+// Operadores Aritméticos
+MAIS:\+
+MENOS:\-
+DIV:/
+MULT:\*
+MOD: [%]
+ATRIBUICAO: [=]
+
+// Operadores Bit a Bit
+OUT_BIT: [<][<]
+IN_BIT: [>][>]
+XOR_BIT: \^
+OR_BIT: \|
+AND_BIT: [&]
+COMPLEMENTO_BIT: [~]
+
+// Operadores Lógicos
+E: [&][&]
+OU: [\|][\|]
+NOT: !
+
+
+// Comentário de linha
+COMENTARIO_LINHA:[/][/].*
+
+
+// Valores constantes
+
+CONST_DEC: [0-9]+
+CONST_REAL: [0-9]+\.[0-9]+
+CONST_BIN: 0b[01]+
+CONST_HEX: 0x[0-9a-fA-F]+
+CONST_CHAR: '[a-zA-Z0-9_]'
+CONST_STR: \"[a-zA-Z0-9à-úÀ-Ú!@#$%&_\-\s]*\"
+
+// Identificadores
+ID: [a-zA-Z_][a-zA-Z0-9_]*
+#NonTerminals
+<MAIN>
+<BLOCO>
+<INSTRUCAO>
+
+<DESVIO_COND>
+<DESVIO_COND_SIMPLES>
+<DESVIO_COND_COMPOSTO>
+
+<REPETICAO>
+<REPETICAO_WHILE>
+<REPETICAO_DO>
+<REPETICAO_FOR>
+
+<DEF_SUBROTINA>
+<DEF_FUNCAO>
+<DEF_PROCEDIMENTO>
+<PARAMETROS>
+<PARAMETRO>
+
+<L_DEC_VAR>
+<DEC_VAR>
+
+<TIPO>
+<ATRIB>
+<ATRIB_COM_DEC_VAR>
+
+<L_ID_dec>
+<ID_dec>
+
+<L_ID>
+<ID>
+
+<ESCOPO> 
+
+<LEITURA>
+<ESCRITA>
+
+<RETORNO>
+<CHAMADA>
+
+<L_exp>
+
+<exp>
+<exp1>
+<exp2>
+<exp3>
+<exp4>
+<exp5>
+<exp6>
+<exp7>
+<exp8>
+<exp9>
+<exp10>
+
+<op_rel>
+<op_neg>
+<op_bitwise>
+<op_arit_baixa>
+<op_arit_alta>
+<op_arit_mais_alta>
+#Grammar
+<MAIN> ::= <BLOCO>;
+
+<BLOCO> ::=  <BLOCO> #26 <INSTRUCAO>  | <INSTRUCAO> ;
+
+<INSTRUCAO> ::= <L_DEC_VAR> PONTO_VIRGULA | <ATRIB> PONTO_VIRGULA #27| <DESVIO_COND> | <REPETICAO> | <LEITURA> | <ESCRITA> | <DEF_SUBROTINA> | <RETORNO> | <CHAMADA> PONTO_VIRGULA ;
+
+<DESVIO_COND> ::= <DESVIO_COND_SIMPLES> | <DESVIO_COND_COMPOSTO>;
+
+<DESVIO_COND_SIMPLES> ::= IF PARENTESES_ABRE <exp> PARENTESES_FECHA #40 <ESCOPO> #41 ;
+
+<DESVIO_COND_COMPOSTO> ::= IF PARENTESES_ABRE <exp> PARENTESES_FECHA #40 <ESCOPO> #42 ELSE <ESCOPO> #43 ;
+
+<REPETICAO> ::= <REPETICAO_WHILE> | <REPETICAO_DO> | <REPETICAO_FOR>;
+
+<REPETICAO_WHILE> ::= WHILE #44 PARENTESES_ABRE <exp> #45 PARENTESES_FECHA <ESCOPO> #46;
+
+<REPETICAO_DO> ::= DO #47 CHAVE_ABRE <BLOCO>  CHAVE_FECHA WHILE PARENTESES_ABRE <exp> PARENTESES_FECHA #48;
+
+<REPETICAO_FOR> ::= FOR PARENTESES_ABRE <ATRIB_COM_DEC_VAR> PONTO_VIRGULA #49 <exp> #50 PONTO_VIRGULA <ATRIB> PARENTESES_FECHA <ESCOPO> #51 ;
+
+<REPETICAO_FOR> ::= FOR PARENTESES_ABRE <ATRIB_COM_DEC_VAR> PONTO_VIRGULA #49 <exp> #50 PONTO_VIRGULA PARENTESES_FECHA <ESCOPO> #51 ;
+
+<LEITURA> ::= COUT OUT_BIT #22 <exp> PONTO_VIRGULA #33;
+
+<ESCRITA> ::= CIN IN_BIT #21 <ID> PONTO_VIRGULA;
+
+<RETORNO> ::= RETURN <exp> #54 PONTO_VIRGULA;
+
+<DEF_SUBROTINA> ::= <DEF_FUNCAO> | <DEF_PROCEDIMENTO>;
+
+<DEF_FUNCAO> ::= <TIPO> ID #6 #3 PARENTESES_ABRE <PARAMETROS> PARENTESES_FECHA <ESCOPO> #53;
+
+<DEF_FUNCAO> ::= <TIPO> ID #6 #3 PARENTESES_ABRE PARENTESES_FECHA <ESCOPO> #53 ;
+
+<DEF_PROCEDIMENTO> ::= VOID ID #52 PARENTESES_ABRE <PARAMETROS> PARENTESES_FECHA <ESCOPO> #53;
+
+<DEF_PROCEDIMENTO> ::= VOID ID #52 PARENTESES_ABRE PARENTESES_FECHA <ESCOPO> #53;
+
+<PARAMETROS> ::= <PARAMETRO> | <PARAMETROS> VIRGULA <PARAMETRO>;
+
+<PARAMETRO> ::= <TIPO> ID #55 | <TIPO> ID COLCHETES_ABRE COLCHETES_FECHA;
+
+<L_DEC_VAR> ::= <L_DEC_VAR> <DEC_VAR> | <DEC_VAR>;
+
+<DEC_VAR> ::= <TIPO> <L_ID_dec> #3 | <TIPO> <L_ID_dec> #3 ATRIBUICAO #10 <exp> #25 ;
+
+<TIPO> ::= INT #1 | FLOAT #1| CHAR #1| STRING #1;
+
+<ATRIB> ::= <L_ID> ATRIBUICAO #10 <exp> #23;
+
+<ATRIB_COM_DEC_VAR> ::= <ATRIB> | <DEC_VAR>;
+
+<L_ID_dec> ::= <L_ID_dec> VIRGULA <ID_dec> | <ID_dec>;
+
+<ID_dec> ::= ID #2 COLCHETES_ABRE <exp> COLCHETES_FECHA #11 | ID #2;
+
+<L_ID> ::= <L_ID> VIRGULA <ID> | <ID>;
+
+<ID> ::= ID #4 COLCHETES_ABRE #28 <exp> #29 COLCHETES_FECHA | ID #4;
+
+<ESCOPO> ::= CHAVE_ABRE #8 <BLOCO> CHAVE_FECHA #9;
+
+<exp> ::= <exp1> | <exp> OU <exp1>;
+
+<exp1> ::= <exp2> | <exp1> E <exp2>;
+
+<exp2> ::= <exp3> | <exp2> OR_BIT #30 <exp3>;
+
+<exp3> ::= <exp4> | <exp3> XOR_BIT #31 <exp4>;
+
+<exp4> ::= <exp5> | <exp4> AND_BIT #24 <exp5>;
+
+<exp5> ::= <exp6> | <exp5> <op_rel> <exp6>;
+
+<exp6> ::= <exp7> | <exp6> <op_bitwise> <exp7>;
+
+<exp7> ::= <exp8> | <exp7> <op_arit_baixa> <exp8>;
+
+<exp8> ::= <exp9> | <exp8> <op_arit_alta> <exp9>;
+
+<exp9> ::= <exp10> | <op_neg> <exp10>;
+
+<exp10> ::= CONST_DEC #20 | CONST_STR | CONST_CHAR | CONST_REAL | CONST_BIN | CONST_HEX | ID #4  #12| ID #4 COLCHETES_ABRE #28 <exp> #29 COLCHETES_FECHA | PARENTESES_ABRE <exp> PARENTESES_FECHA | ATRIBUICAO | <CHAMADA>;
+
+<op_rel> ::= MAIOR #34 | MENOR #35 | MAIOR_IGUAL #36 | MENOR_IGUAL #37 | IGUAL #38 | DIFERENTE #39;
+
+<op_neg> ::= MENOS | COMPLEMENTO_BIT | NOT #32;
+
+<op_bitwise> ::= OUT_BIT | IN_BIT;
+
+<op_arit_baixa> ::= MAIS #14 | MENOS #14;
+
+<op_arit_alta> ::= MULT #15 | DIV #15 | MOD #15;
+
+<CHAMADA> ::= ID #5 PARENTESES_ABRE <L_exp> PARENTESES_FECHA #56| ID #5 PARENTESES_ABRE PARENTESES_FECHA #56;
+
+<L_exp> ::= <L_exp> VIRGULA <exp> #57 | <exp> #57;
+
